@@ -21,7 +21,7 @@ No requiere licencias externas ni servicios de terceros: todo el contenido se al
 
 == Instalación ==
 
-1. Sube la carpeta `plugin-accesibilidad-lsc` a `/wp-content/plugins/`.
+1. Sube la carpeta `accesibilidad-lsc` a `/wp-content/plugins/`.
 2. Activa el plugin desde el panel "Plugins" de WordPress.
 3. Ve a "Accesibilidad LSC" en el menú de administración y haz clic en "Añadir bloque nuevo".
 4. Ponle un nombre al bloque (ej. "Menú de apoyo visual principal"), elige el menú de WordPress de origen, y ajusta el tamaño, la posición y el alcance (todo el sitio o páginas específicas).

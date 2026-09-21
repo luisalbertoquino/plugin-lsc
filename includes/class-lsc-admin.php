@@ -29,6 +29,23 @@ class LSC_Admin {
 		add_action( 'admin_menu', array( $this, 'register_pages' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
 		add_action( 'admin_notices', array( $this, 'show_notices' ) );
+		add_filter( 'plugin_action_links_' . plugin_basename( LSC_ACCESIBILIDAD_FILE ), array( $this, 'add_settings_link' ) );
+	}
+
+	/**
+	 * Añade el enlace "Configuración" junto a Activar/Desactivar en la
+	 * lista general de plugins.
+	 *
+	 * @param array $links
+	 * @return array
+	 */
+	public function add_settings_link( $links ) {
+		$settings_url = admin_url( 'admin.php?page=lsc-accesibilidad' );
+		$settings_link = '<a href="' . esc_url( $settings_url ) . '">Configuración</a>';
+
+		array_unshift( $links, $settings_link );
+
+		return $links;
 	}
 
 	public function register_pages() {

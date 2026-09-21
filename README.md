@@ -15,4 +15,4 @@ Ver [readme.txt](readme.txt) para la documentación completa (instalación, uso 
 ./build.sh
 ```
 
-Genera `build/plugin-accesibilidad-lsc.zip`, listo para subir desde **Plugins > Añadir nuevo > Subir plugin** en el panel de WordPress. La carpeta `build/` no se versiona (ver `.gitignore`); cada `git pull` requiere volver a correr `build.sh` para regenerar el zip.
+Genera `build/accesibilidad-lsc.zip`, listo para subir desde **Plugins > Añadir nuevo > Subir plugin** en el panel de WordPress. La carpeta `build/` no se versiona (ver `.gitignore`); cada `git pull` requiere volver a correr `build.sh` para regenerar el zip.

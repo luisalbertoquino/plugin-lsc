@@ -75,6 +75,30 @@
 	}
 
 	/**
+	 * Precarga en caché del navegador todos los archivos LSC (imágenes/GIF
+	 * y videos) para que, al hacer hover o tocar el ícono, se muestren de
+	 * inmediato en vez de aparecer primero el recuadro vacío mientras cargan.
+	 */
+	function preloadMedia( items ) {
+		Object.keys( items ).forEach( function ( itemId ) {
+			var item = items[ itemId ];
+			if ( ! item || ! item.url ) {
+				return;
+			}
+
+			if ( 'mp4' === item.type ) {
+				var video = document.createElement( 'video' );
+				video.preload = 'auto';
+				video.muted = true;
+				video.src = item.url;
+			} else {
+				var img = new Image();
+				img.src = item.url;
+			}
+		} );
+	}
+
+	/**
 	 * Renderiza el contenido LSC dentro de un contenedor, reemplazándolo
 	 * por un aviso de error si el archivo no logra cargar.
 	 */
@@ -352,9 +376,14 @@
 			var mobileMenu  = document.querySelector( block.selectorMobile );
 			var config      = { x: block.offsetX, y: block.offsetY, width: block.boxWidth };
 
+			preloadMedia( block.items );
 			initDesktopHoverForBlock( desktopAttach, desktopMenu, levelSelector, block.items, config );
 			initMobileIconsForBlock( mobileMenu, levelSelector, block.items, openModal );
 		} );
+
+		if ( CAMPUS && CAMPUS.url ) {
+			preloadMedia( { campus: CAMPUS } );
+		}
 
 		initCampusVirtualButton( desktopAttach, openModal );
 	}

@@ -10,15 +10,17 @@
 	function updatePreview( $row, url, type ) {
 		var $preview = $row.find( '.lsc-preview' );
 
+		$preview.empty();
+
 		if ( ! url ) {
-			$preview.html( '<span class="lsc-preview-empty">Sin contenido asignado</span>' );
+			$( '<span class="lsc-preview-empty">Sin contenido asignado</span>' ).appendTo( $preview );
 			return;
 		}
 
 		if ( 'mp4' === type ) {
-			$preview.html( '<video src="' + url + '" muted loop playsinline width="100"></video>' );
+			$( '<video>', { muted: true, loop: true, playsinline: true, width: 100, src: url } ).appendTo( $preview );
 		} else {
-			$preview.html( '<img src="' + url + '" alt="" width="100">' );
+			$( '<img>', { src: url, alt: '', width: 100 } ).appendTo( $preview );
 		}
 	}
 

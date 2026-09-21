@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Accesibilidad LSC - Bloques por Menú
  * Description: Muestra videos o GIF en Lengua de Señas Colombiana (LSC) asociados a los ítems principales de cualquier menú de WordPress, mediante bloques configurables (menú, tamaño, posición y páginas donde se muestran), al hacer hover en escritorio o tocar un ícono en móvil.
- * Version: 2.0.0
+ * Version: 2.0.2
  * Requires PHP: 7.4
  * Author: UNINAVARRA
  * Text Domain: lsc-accesibilidad
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'LSC_ACCESIBILIDAD_VERSION', '2.0.0' );
+define( 'LSC_ACCESIBILIDAD_VERSION', '2.0.2' );
 define( 'LSC_ACCESIBILIDAD_FILE', __FILE__ );
 define( 'LSC_ACCESIBILIDAD_DIR', plugin_dir_path( __FILE__ ) );
 define( 'LSC_ACCESIBILIDAD_URL', plugin_dir_url( __FILE__ ) );
