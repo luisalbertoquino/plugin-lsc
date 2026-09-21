@@ -333,7 +333,7 @@
 		}
 
 		if ( typeof desktopAttach === 'function' ) {
-			desktopAttach( button, item, { x: CAMPUS.offsetX, y: CAMPUS.offsetY } );
+			desktopAttach( button, item, { x: CAMPUS.offsetX, y: CAMPUS.offsetY, width: CAMPUS.boxWidth } );
 		}
 
 		var icon = document.createElement( 'span' );

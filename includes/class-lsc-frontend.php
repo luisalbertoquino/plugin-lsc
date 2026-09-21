@@ -119,10 +119,11 @@ class LSC_Frontend {
 		}
 
 		return array(
-			'url'     => $campus['url'],
-			'type'    => $campus['type'],
-			'offsetX' => isset( $campus['offset_x'] ) ? (int) $campus['offset_x'] : 30,
-			'offsetY' => isset( $campus['offset_y'] ) ? (int) $campus['offset_y'] : -15,
+			'url'      => $campus['url'],
+			'type'     => $campus['type'],
+			'boxWidth' => isset( $campus['box_width'] ) ? (int) $campus['box_width'] : LSC_Admin_Campus::DEFAULT_BOX_WIDTH,
+			'offsetX'  => isset( $campus['offset_x'] ) ? (int) $campus['offset_x'] : 30,
+			'offsetY'  => isset( $campus['offset_y'] ) ? (int) $campus['offset_y'] : -15,
 		);
 	}
 }

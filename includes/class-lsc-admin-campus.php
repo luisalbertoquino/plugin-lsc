@@ -14,6 +14,7 @@ class LSC_Admin_Campus {
 	const NONCE_ACTION  = 'lsc_campus_save';
 	const NONCE_NAME    = 'lsc_campus_nonce';
 	const MAX_FILE_SIZE = 3145728; // 3 MB en bytes.
+	const DEFAULT_BOX_WIDTH = 100;
 
 	public function __construct() {
 		add_action( 'admin_post_lsc_campus_save', array( $this, 'handle_save' ) );
@@ -24,6 +25,7 @@ class LSC_Admin_Campus {
 		$url      = isset( $campus['url'] ) ? $campus['url'] : '';
 		$type     = isset( $campus['type'] ) ? $campus['type'] : '';
 		$att_id   = isset( $campus['attachment_id'] ) ? $campus['attachment_id'] : '';
+		$box_width = isset( $campus['box_width'] ) ? $campus['box_width'] : self::DEFAULT_BOX_WIDTH;
 		$offset_x = isset( $campus['offset_x'] ) ? $campus['offset_x'] : 30;
 		$offset_y = isset( $campus['offset_y'] ) ? $campus['offset_y'] : -15;
 		$back_url = admin_url( 'admin.php?page=lsc-accesibilidad' );
@@ -58,6 +60,10 @@ class LSC_Admin_Campus {
 							<button type="button" class="button lsc-upload-button" data-item-id="campus-virtual">Subir GIF/Video</button>
 							<button type="button" class="button lsc-remove-button" data-item-id="campus-virtual" <?php disabled( '', $url ); ?>>Quitar</button>
 						</td>
+					</tr>
+					<tr>
+						<th><label for="lsc-campus-box-width">Tamaño del recuadro (px)</label></th>
+						<td><input type="number" id="lsc-campus-box-width" name="box_width" min="40" max="400" value="<?php echo esc_attr( $box_width ); ?>"></td>
 					</tr>
 					<tr>
 						<th><label for="lsc-campus-offset-x">Posición horizontal (px)</label></th>
@@ -98,8 +104,9 @@ class LSC_Admin_Campus {
 			}
 		}
 
-		$data['offset_x'] = isset( $_POST['offset_x'] ) ? intval( $_POST['offset_x'] ) : 30;
-		$data['offset_y'] = isset( $_POST['offset_y'] ) ? intval( $_POST['offset_y'] ) : -15;
+		$data['box_width'] = isset( $_POST['box_width'] ) ? absint( $_POST['box_width'] ) : self::DEFAULT_BOX_WIDTH;
+		$data['offset_x']  = isset( $_POST['offset_x'] ) ? intval( $_POST['offset_x'] ) : 30;
+		$data['offset_y']  = isset( $_POST['offset_y'] ) ? intval( $_POST['offset_y'] ) : -15;
 
 		update_option( LSC_ACCESIBILIDAD_CAMPUS_OPTION_KEY, $data );
 
