@@ -1,0 +1,49 @@
+.lsc-accesibilidad-table {
+	margin-top: 16px;
+	border-collapse: collapse;
+}
+
+.lsc-accesibilidad-table th,
+.lsc-accesibilidad-table td {
+	padding: 12px;
+	vertical-align: middle;
+}
+
+.lsc-row-parent td:first-child {
+	font-size: 14px;
+}
+
+.lsc-row-child td:first-child {
+	padding-left: 32px;
+	font-weight: normal;
+	color: #50575e;
+}
+
+.lsc-row-child td:first-child::before {
+	content: "\21B3";
+	margin-right: 6px;
+	color: #a7aaad;
+}
+
+.lsc-preview {
+	display: flex;
+	align-items: center;
+	min-height: 90px;
+}
+
+.lsc-preview img,
+.lsc-preview video {
+	max-width: 160px;
+	height: auto;
+	border: 1px solid #ccd0d4;
+	border-radius: 4px;
+}
+
+.lsc-preview-empty {
+	color: #757575;
+	font-style: italic;
+}
+
+.lsc-remove-button {
+	margin-left: 6px;
+}

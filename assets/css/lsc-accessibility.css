@@ -1,0 +1,184 @@
+/* Recuadro flotante de escritorio (hover) */
+.lsc-hover-box {
+	position: fixed;
+	z-index: 100000;
+	background: #fff;
+	border: 1px solid #ccc;
+	border-radius: 6px;
+	box-shadow: 0 4px 16px rgba( 0, 0, 0, 0.2 );
+	padding: 6px;
+	display: none;
+	pointer-events: none;
+}
+
+.lsc-hover-box.is-visible {
+	display: block;
+}
+
+.lsc-hover-box img,
+.lsc-hover-box video {
+	display: block;
+	width: 100%;
+	height: auto;
+	border-radius: 4px;
+}
+
+.lsc-hover-box .lsc-hover-label {
+	margin-top: 6px;
+	font-size: 12px;
+	line-height: 1.3;
+	color: #333;
+	text-align: center;
+}
+
+/* Aviso cuando el video/GIF no logra cargar */
+.lsc-media-error {
+	margin: 0;
+	padding: 4px;
+	font-size: 11px;
+	line-height: 1.3;
+	color: #757575;
+	text-align: center;
+}
+
+/* Ícono LSC junto al enlace en el menú móvil (offcanvas) */
+.lsc-mobile-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	margin-left: 8px;
+	vertical-align: middle;
+	background: rgba( 0, 0, 0, 0.06 );
+	border-radius: 50%;
+	cursor: pointer;
+	flex-shrink: 0;
+}
+
+.lsc-mobile-icon svg {
+	width: 16px;
+	height: 16px;
+	fill: currentColor;
+}
+
+/* Ícono junto al botón "Campus Virtual etR" en la topbar */
+.lsc-mobile-icon-inline {
+	margin-left: 6px;
+}
+
+/*
+ * <li> del menú offcanvas que llevan ícono LSC: se fuerza flex-wrap para
+ * que el texto del enlace, el caret y el ícono LSC se acomoden en la misma
+ * fila sin desbordarse ni tapar el toggle del submenú en pantallas angostas.
+ */
+.lsc-has-mobile-icon {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+}
+
+.lsc-has-mobile-icon > a {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.lsc-has-mobile-icon > .dropdown-menu {
+	flex-basis: 100%;
+}
+
+@media ( max-width: 782px ) {
+	.lsc-mobile-icon {
+		width: 44px;
+		height: 44px;
+	}
+
+	.lsc-mobile-icon svg {
+		width: 20px;
+		height: 20px;
+	}
+}
+
+/* Modal móvil */
+.lsc-modal-overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 100001;
+	background: rgba( 0, 0, 0, 0.6 );
+	display: none;
+	align-items: center;
+	justify-content: center;
+	padding: 24px;
+}
+
+.lsc-modal-overlay.is-visible {
+	display: flex;
+}
+
+.lsc-modal {
+	background: #fff;
+	border-radius: 8px;
+	max-width: 90vw;
+	max-height: 90vh;
+	padding: 16px;
+	position: relative;
+}
+
+.lsc-modal-media img,
+.lsc-modal-media video {
+	display: block;
+	max-width: 100%;
+	max-height: 70vh;
+	border-radius: 4px;
+	margin: 0 auto;
+}
+
+.lsc-modal-close {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	width: 32px;
+	height: 32px;
+	border: none;
+	background: #f1f1f1;
+	border-radius: 50%;
+	font-size: 18px;
+	line-height: 1;
+	cursor: pointer;
+}
+
+@media ( max-width: 480px ) {
+	.lsc-modal-overlay {
+		padding: 12px;
+	}
+
+	.lsc-modal {
+		max-width: 100vw;
+		width: 100%;
+		padding: 12px;
+	}
+
+	.lsc-modal-media img,
+	.lsc-modal-media video {
+		max-height: 60vh;
+	}
+
+	.lsc-modal-close {
+		width: 44px;
+		height: 44px;
+		top: 6px;
+		right: 6px;
+	}
+}
+
+@media ( max-height: 480px ) and ( orientation: landscape ) {
+	.lsc-modal {
+		max-height: 96vh;
+		padding: 10px;
+	}
+
+	.lsc-modal-media img,
+	.lsc-modal-media video {
+		max-height: 78vh;
+	}
+}

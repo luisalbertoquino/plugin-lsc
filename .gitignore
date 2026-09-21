@@ -1,0 +1,5 @@
+# Estado interno de Claude Code, no forma parte del plugin
+.claude/
+
+# Paquetes generados por build.sh, no se versionan
+build/
