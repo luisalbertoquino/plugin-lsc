@@ -1,7 +1,8 @@
 <?php
 /**
- * Pantalla de listado de bloques de contenido LSC, más la fila fija
- * del botón "Campus Virtual etR" (caso especial, fuera del CRUD).
+ * Pantalla de listado de bloques de contenido LSC (por menú de
+ * WordPress). Los botones fijos del tema (ej. "Campus Virtual etR")
+ * tienen su propio CRUD, ver LSC_Admin_Buttons_List.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -24,15 +25,15 @@ class LSC_Admin_List {
 
 	public function render() {
 		$blocks       = $this->repository->get_all();
-		$campus       = get_option( LSC_ACCESIBILIDAD_CAMPUS_OPTION_KEY, array() );
 		$new_url      = admin_url( 'admin.php?page=lsc-accesibilidad-form' );
-		$campus_edit  = admin_url( 'admin.php?page=lsc-accesibilidad-campus' );
+		$buttons_url  = admin_url( 'admin.php?page=lsc-accesibilidad-botones' );
 
 		?>
 		<div class="wrap lsc-accesibilidad-wrap">
 			<h1>
 				Accesibilidad LSC
 				<a href="<?php echo esc_url( $new_url ); ?>" class="page-title-action">Añadir bloque nuevo</a>
+				<a href="<?php echo esc_url( $buttons_url ); ?>" class="page-title-action">Botones fijos (Campus Virtual y otros)</a>
 			</h1>
 			<p>Cada bloque asigna contenido LSC (GIF o video) a los ítems principales de un menú de WordPress, con su propio tamaño, posición y páginas donde debe mostrarse.</p>
 
@@ -57,8 +58,6 @@ class LSC_Admin_List {
 							<?php $this->render_block_row( $block ); ?>
 						<?php endforeach; ?>
 					<?php endif; ?>
-
-					<?php $this->render_campus_row( $campus, $campus_edit ); ?>
 				</tbody>
 			</table>
 		</div>
@@ -99,20 +98,6 @@ class LSC_Admin_List {
 			<td>
 				<a href="<?php echo esc_url( $edit_url ); ?>" class="button">Editar</a>
 				<a href="<?php echo esc_url( $trash_url ); ?>" class="button" onclick="return confirm('¿Enviar este bloque a la papelera?');">Eliminar</a>
-			</td>
-		</tr>
-		<?php
-	}
-
-	private function render_campus_row( $campus, $campus_edit ) {
-		$has_content = ! empty( $campus['url'] );
-		?>
-		<tr class="lsc-campus-row">
-			<td><strong>Botón: Campus Virtual etR</strong></td>
-			<td colspan="3"><em>Elemento fijo del sitio (no es un ítem de menú de WordPress).</em></td>
-			<td><?php echo $has_content ? 'Configurado' : 'Sin contenido'; ?></td>
-			<td>
-				<a href="<?php echo esc_url( $campus_edit ); ?>" class="button">Editar</a>
 			</td>
 		</tr>
 		<?php

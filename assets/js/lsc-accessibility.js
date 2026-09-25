@@ -6,7 +6,7 @@
 	}
 
 	var BLOCKS = lscAccesibilidadData.blocks || [];
-	var CAMPUS = lscAccesibilidadData.campusVirtual || null;
+	var BUTTONS = lscAccesibilidadData.buttons || [];
 	var HOVER_DELAY = 150;
 	var DEFAULT_BOX_WIDTH = 100;
 
@@ -318,22 +318,27 @@
 		} );
 	}
 
-	/* ---------- Botón "Campus Virtual etR" (topbar) ---------- */
+	/* ---------- Botones fijos (topbar): "Campus Virtual etR" y otros ---------- */
 
-	function initCampusVirtualButton( desktopAttach, openModal ) {
-		if ( ! CAMPUS || ! CAMPUS.url ) {
+	/**
+	 * Engancha un botón fijo del tema (identificado por su propio
+	 * selector CSS, no un ítem de menú) al recuadro flotante en hover
+	 * de escritorio y al ícono + modal en móvil.
+	 */
+	function initFixedButton( buttonConfig, desktopAttach, openModal ) {
+		if ( ! buttonConfig || ! buttonConfig.url || ! buttonConfig.selector ) {
 			return;
 		}
 
-		var item = { url: CAMPUS.url, type: CAMPUS.type };
+		var item = { url: buttonConfig.url, type: buttonConfig.type };
 
-		var button = document.querySelector( '.unnv-campus-btn' );
+		var button = document.querySelector( buttonConfig.selector );
 		if ( ! button ) {
 			return;
 		}
 
 		if ( typeof desktopAttach === 'function' ) {
-			desktopAttach( button, item, { x: CAMPUS.offsetX, y: CAMPUS.offsetY, width: CAMPUS.boxWidth } );
+			desktopAttach( button, item, { x: buttonConfig.offsetX, y: buttonConfig.offsetY, width: buttonConfig.boxWidth } );
 		}
 
 		var icon = document.createElement( 'span' );
@@ -359,6 +364,12 @@
 		button.insertAdjacentElement( 'afterend', icon );
 	}
 
+	function initFixedButtons( desktopAttach, openModal ) {
+		BUTTONS.forEach( function ( buttonConfig ) {
+			initFixedButton( buttonConfig, desktopAttach, openModal );
+		} );
+	}
+
 	function init() {
 		/*
 		 * Cubre tanto los <li> de nivel 0/1 con clase "level-X" (estructura
@@ -381,11 +392,13 @@
 			initMobileIconsForBlock( mobileMenu, levelSelector, block.items, openModal );
 		} );
 
-		if ( CAMPUS && CAMPUS.url ) {
-			preloadMedia( { campus: CAMPUS } );
-		}
+		var buttonsItems = {};
+		BUTTONS.forEach( function ( buttonConfig, index ) {
+			buttonsItems[ 'boton-' + index ] = buttonConfig;
+		} );
+		preloadMedia( buttonsItems );
 
-		initCampusVirtualButton( desktopAttach, openModal );
+		initFixedButtons( desktopAttach, openModal );
 	}
 
 	if ( 'loading' === document.readyState ) {

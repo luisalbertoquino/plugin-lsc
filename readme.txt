@@ -2,7 +2,7 @@
 Requires at least: 5.0
 Tested up to: 6.x
 Requires PHP: 7.4
-Stable tag: 2.0.0
+Stable tag: 2.1.0
 License: GPLv2 or later
 
 Muestra videos (MP4) o GIF en Lengua de Señas Colombiana (LSC) asociados a los ítems principales de cualquier menú de WordPress, como estrategia de accesibilidad e inclusión.
@@ -15,7 +15,7 @@ Este plugin permite crear "bloques" de contenido LSC desde el panel de administr
 * En **móvil** (menú offcanvas): aparece un pequeño ícono junto al enlace; al tocarlo se abre un modal centrado con el contenido. El enlace del menú sigue funcionando normalmente.
 * Si un ítem no tiene contenido asignado, no se muestra nada adicional.
 * Cada bloque puede limitarse a **todo el sitio** o a **páginas específicas**.
-* El botón "Campus Virtual etR" (elemento fijo del tema, no un ítem de menú) se configura aparte, en su propia pantalla.
+* Además de los bloques por menú, existe un CRUD independiente de **botones fijos** (ej. "Campus Virtual etR"): elementos del tema que no son ítems de menú, identificados por su propio selector CSS. Se pueden crear tantos como se necesiten, cada uno con su contenido, tamaño y posición.
 
 No requiere licencias externas ni servicios de terceros: todo el contenido se aloja en la Biblioteca de Medios de WordPress.
 
@@ -27,13 +27,13 @@ No requiere licencias externas ni servicios de terceros: todo el contenido se al
 4. Ponle un nombre al bloque (ej. "Menú de apoyo visual principal"), elige el menú de WordPress de origen, y ajusta el tamaño, la posición y el alcance (todo el sitio o páginas específicas).
 5. Para cada ítem principal del menú elegido, haz clic en "Subir GIF/Video", selecciona el archivo (GIF o MP4) desde la Biblioteca de Medios.
 6. Guarda el bloque. Puedes crear tantos bloques como menús quieras cubrir.
-7. Para el botón "Campus Virtual etR", usa la fila fija al final del listado.
+7. Para botones fijos del tema (ej. "Campus Virtual etR"), ve a "Accesibilidad LSC → Botones fijos" y añade uno nuevo indicando su selector CSS (clase o ID del botón en el HTML del sitio).
 
 == Requisitos técnicos ==
 
 * Compatible con PHP 7.4, 8.2 y 8.3.
 * No depende de jQuery ni de librerías externas en el frontend (JS nativo). El panel de administración usa `wp.media`, que ya requiere jQuery en el admin de WordPress.
-* Los bloques se guardan como un tipo de contenido interno (`lsc_bloque`), sin interfaz nativa de WordPress: solo se administran desde las pantallas propias del plugin.
+* Los bloques se guardan como un tipo de contenido interno (`lsc_bloque`) y los botones fijos en otro (`lsc_boton`), ninguno con interfaz nativa de WordPress: solo se administran desde las pantallas propias del plugin.
 
 == Prueba recomendada antes de producción ==
 
@@ -44,9 +44,15 @@ No requiere licencias externas ni servicios de terceros: todo el contenido se al
 5. Verificar en móvil (o modo responsive del navegador) que el ícono aparece junto al enlace y que el modal se abre/cierra correctamente, incluyendo con la tecla Escape.
 6. Configurar el alcance de un bloque a una página específica y verificar que no aparece en otras páginas.
 7. Eliminar un bloque y confirmar que pasa a la papelera de WordPress.
-8. Verificar que el botón Campus Virtual sigue funcionando de forma independiente.
+8. Verificar que el botón Campus Virtual (migrado automáticamente al CRUD de botones fijos) sigue funcionando: hover con recuadro del tamaño configurado en escritorio, e ícono + modal en móvil (sin mostrar la mano en escritorio).
+9. Crear un botón fijo nuevo apuntando a otro elemento del tema y confirmar que funciona de forma independiente al primero.
 
 == Changelog ==
+
+= 2.1.0 =
+* Los botones fijos del tema (antes solo "Campus Virtual etR", en su propia pantalla fija) pasan a un CRUD independiente ("Botones fijos"): se pueden crear, editar y eliminar tantos como se necesiten, cada uno con su selector CSS, contenido, tamaño y posición.
+* Corrige que el ícono de mano del botón fijo apareciera también en escritorio; ahora solo se muestra en móvil (en escritorio ya existe el recuadro en hover).
+* Migración automática de la configuración de Campus Virtual (2.0.x) al nuevo CRUD de botones fijos.
 
 = 2.0.0 =
 * Rediseño a sistema de bloques con CRUD completo (crear, editar, eliminar).

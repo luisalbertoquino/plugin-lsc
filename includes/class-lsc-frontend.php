@@ -1,7 +1,8 @@
 <?php
 /**
  * Carga los assets del frontend y expone los bloques de contenido LSC
- * aplicables a la página actual, más la configuración de Campus Virtual.
+ * aplicables a la página actual, más los botones fijos (ej. "Campus
+ * Virtual etR").
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,17 +14,21 @@ class LSC_Frontend {
 	/** @var LSC_Blocks_Repository */
 	private $repository;
 
-	public function __construct( LSC_Blocks_Repository $repository ) {
-		$this->repository = $repository;
+	/** @var LSC_Buttons_Repository */
+	private $buttons_repository;
+
+	public function __construct( LSC_Blocks_Repository $repository, LSC_Buttons_Repository $buttons_repository ) {
+		$this->repository         = $repository;
+		$this->buttons_repository = $buttons_repository;
 
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 	}
 
 	public function enqueue_assets() {
-		$blocks_data = $this->get_applicable_blocks_data();
-		$campus_data = $this->get_campus_data();
+		$blocks_data  = $this->get_applicable_blocks_data();
+		$buttons_data = $this->get_buttons_data();
 
-		if ( empty( $blocks_data ) && empty( $campus_data ) ) {
+		if ( empty( $blocks_data ) && empty( $buttons_data ) ) {
 			return;
 		}
 
@@ -43,8 +48,8 @@ class LSC_Frontend {
 		);
 
 		wp_localize_script( 'lsc-accesibilidad', 'lscAccesibilidadData', array(
-			'blocks'       => $blocks_data,
-			'campusVirtual' => $campus_data,
+			'blocks'  => $blocks_data,
+			'buttons' => $buttons_data,
 		) );
 	}
 
@@ -111,19 +116,27 @@ class LSC_Frontend {
 		return is_page( $block['scope_pages'] );
 	}
 
-	private function get_campus_data() {
-		$campus = get_option( LSC_ACCESIBILIDAD_CAMPUS_OPTION_KEY, array() );
+	/**
+	 * Devuelve, ya formateados para el JS, todos los botones fijos
+	 * publicados y con contenido asignado.
+	 *
+	 * @return array
+	 */
+	private function get_buttons_data() {
+		$buttons = $this->buttons_repository->get_published();
+		$data    = array();
 
-		if ( empty( $campus['url'] ) ) {
-			return array();
+		foreach ( $buttons as $button ) {
+			$data[] = array(
+				'selector' => $button['selector'],
+				'url'      => $button['url'],
+				'type'     => $button['type'],
+				'boxWidth' => $button['box_width'],
+				'offsetX'  => $button['offset_x'],
+				'offsetY'  => $button['offset_y'],
+			);
 		}
 
-		return array(
-			'url'      => $campus['url'],
-			'type'     => $campus['type'],
-			'boxWidth' => isset( $campus['box_width'] ) ? (int) $campus['box_width'] : LSC_Admin_Campus::DEFAULT_BOX_WIDTH,
-			'offsetX'  => isset( $campus['offset_x'] ) ? (int) $campus['offset_x'] : 30,
-			'offsetY'  => isset( $campus['offset_y'] ) ? (int) $campus['offset_y'] : -15,
-		);
+		return $data;
 	}
 }

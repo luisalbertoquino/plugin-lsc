@@ -62,9 +62,22 @@
 	fill: currentColor;
 }
 
-/* Ícono junto al botón "Campus Virtual etR" en la topbar */
+/*
+ * Ícono junto a botones fijos de la topbar (ej. "Campus Virtual etR").
+ * A diferencia del ícono de los ítems de menú (que vive dentro del
+ * offcanvas, ya oculto en escritorio por el propio tema), estos botones
+ * son visibles en ambos tamaños de pantalla. En escritorio ya existe el
+ * recuadro flotante en hover, así que el ícono solo se muestra en móvil.
+ */
 .lsc-mobile-icon-inline {
+	display: none;
 	margin-left: 6px;
+}
+
+@media ( max-width: 782px ) {
+	.lsc-mobile-icon-inline {
+		display: inline-flex;
+	}
 }
 
 /*

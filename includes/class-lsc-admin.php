@@ -17,14 +17,17 @@ class LSC_Admin {
 	/** @var LSC_Admin_Form */
 	private $form_screen;
 
-	/** @var LSC_Admin_Campus */
-	private $campus_screen;
+	/** @var LSC_Admin_Buttons_List */
+	private $buttons_list_screen;
 
-	public function __construct() {
-		$repository          = new LSC_Blocks_Repository();
-		$this->list_screen   = new LSC_Admin_List( $repository );
-		$this->form_screen   = new LSC_Admin_Form( $repository );
-		$this->campus_screen = new LSC_Admin_Campus();
+	/** @var LSC_Admin_Buttons_Form */
+	private $buttons_form_screen;
+
+	public function __construct( LSC_Blocks_Repository $repository, LSC_Buttons_Repository $buttons_repository ) {
+		$this->list_screen         = new LSC_Admin_List( $repository );
+		$this->form_screen         = new LSC_Admin_Form( $repository );
+		$this->buttons_list_screen = new LSC_Admin_Buttons_List( $buttons_repository );
+		$this->buttons_form_screen = new LSC_Admin_Buttons_Form( $buttons_repository );
 
 		add_action( 'admin_menu', array( $this, 'register_pages' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
@@ -69,12 +72,21 @@ class LSC_Admin {
 		);
 
 		add_submenu_page(
-			null,
-			'Campus Virtual etR',
-			'Campus Virtual etR',
+			'lsc-accesibilidad',
+			'Botones fijos LSC',
+			'Botones fijos',
 			'manage_options',
-			'lsc-accesibilidad-campus',
-			array( $this->campus_screen, 'render' )
+			'lsc-accesibilidad-botones',
+			array( $this->buttons_list_screen, 'render' )
+		);
+
+		add_submenu_page(
+			null,
+			'Botón fijo LSC',
+			'Botón fijo LSC',
+			'manage_options',
+			'lsc-accesibilidad-boton-form',
+			array( $this->buttons_form_screen, 'render' )
 		);
 	}
 
@@ -82,7 +94,8 @@ class LSC_Admin {
 		$pages = array(
 			'toplevel_page_lsc-accesibilidad',
 			'admin_page_lsc-accesibilidad-form',
-			'admin_page_lsc-accesibilidad-campus',
+			'lsc-accesibilidad_page_lsc-accesibilidad-botones',
+			'admin_page_lsc-accesibilidad-boton-form',
 		);
 
 		if ( ! in_array( $hook, $pages, true ) ) {
