@@ -2,7 +2,7 @@
 Requires at least: 5.0
 Tested up to: 6.x
 Requires PHP: 7.4
-Stable tag: 2.1.0
+Stable tag: 2.1.1
 License: GPLv2 or later
 
 Muestra videos (MP4) o GIF en Lengua de Señas Colombiana (LSC) asociados a los ítems principales de cualquier menú de WordPress, como estrategia de accesibilidad e inclusión.
@@ -48,6 +48,10 @@ No requiere licencias externas ni servicios de terceros: todo el contenido se al
 9. Crear un botón fijo nuevo apuntando a otro elemento del tema y confirmar que funciona de forma independiente al primero.
 
 == Changelog ==
+
+= 2.1.1 =
+* Corrige que al crear un bloque nuevo, al elegir el menú de origen no aparecieran sus ítems principales para asignarles contenido.
+* Corrige que cambiar de menú recargara toda la página y borrara lo demás ya llenado en el formulario (nombre, tamaño, posición, contenido ya subido); ahora los ítems del menú elegido se cargan por AJAX sin perder el resto del formulario.
 
 = 2.1.0 =
 * Los botones fijos del tema (antes solo "Campus Virtual etR", en su propia pantalla fija) pasan a un CRUD independiente ("Botones fijos"): se pueden crear, editar y eliminar tantos como se necesiten, cada uno con su selector CSS, contenido, tamaño y posición.

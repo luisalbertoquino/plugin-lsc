@@ -115,6 +115,8 @@ class LSC_Admin {
 		wp_localize_script( 'lsc-accesibilidad-admin', 'lscAccesibilidadAdmin', array(
 			'maxFileSize'      => LSC_Admin_Form::MAX_FILE_SIZE,
 			'maxFileSizeLabel' => '3 MB',
+			'ajaxUrl'          => admin_url( 'admin-ajax.php' ),
+			'menuItemsNonce'   => wp_create_nonce( LSC_Admin_Form::NONCE_ACTION ),
 		) );
 
 		wp_enqueue_style(

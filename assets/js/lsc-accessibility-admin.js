@@ -41,7 +41,14 @@
 	$( function () {
 		var frame;
 
-		$( '.lsc-upload-button' ).on( 'click', function ( event ) {
+		/*
+		 * Delegados en document (no atados directamente a cada botón):
+		 * la sección de ítems del formulario de bloques se reemplaza por
+		 * AJAX al cambiar de menú (ver más abajo), así que los botones
+		 * "Subir"/"Quitar" de las filas insertadas después también deben
+		 * quedar funcionando sin tener que re-enganchar nada.
+		 */
+		$( document ).on( 'click', '.lsc-upload-button', function ( event ) {
 			event.preventDefault();
 
 			var $button = $( this );
@@ -84,7 +91,7 @@
 			frame.open();
 		} );
 
-		$( '.lsc-remove-button' ).on( 'click', function ( event ) {
+		$( document ).on( 'click', '.lsc-remove-button', function ( event ) {
 			event.preventDefault();
 
 			var $button = $( this );
@@ -97,5 +104,48 @@
 
 			updatePreview( $row, '', '' );
 		} );
+
+		/*
+		 * Formulario de bloques: al cambiar el menú de origen, se cargan
+		 * por AJAX los ítems principales de ese menú dentro de
+		 * #lsc-items-section, sin recargar el resto del formulario (así
+		 * no se pierde el nombre, tamaño, posición, etc. ya llenados).
+		 */
+		var $menuSelect   = $( '#lsc-menu' );
+		var $itemsSection = $( '#lsc-items-section' );
+
+		if ( $menuSelect.length && $itemsSection.length && typeof lscAccesibilidadAdmin !== 'undefined' ) {
+			$menuSelect.on( 'change', function () {
+				var menuId = $menuSelect.val();
+				var $spinner = $menuSelect.closest( 'td' ).find( '.lsc-menu-spinner' );
+				var $form = $menuSelect.closest( 'form' );
+
+				if ( ! menuId ) {
+					$itemsSection.empty();
+					return;
+				}
+
+				$spinner.addClass( 'is-active' );
+				$menuSelect.prop( 'disabled', true );
+
+				$.post( lscAccesibilidadAdmin.ajaxUrl, {
+					action: 'lsc_get_menu_items',
+					nonce: lscAccesibilidadAdmin.menuItemsNonce,
+					menu_id: menuId,
+					id: $form.find( '[name="id"]' ).val() || 0,
+				} ).done( function ( response ) {
+					if ( response && response.success ) {
+						$itemsSection.html( response.data.html );
+					} else {
+						window.alert( 'No se pudieron cargar los ítems de este menú. Intenta de nuevo.' );
+					}
+				} ).fail( function () {
+					window.alert( 'No se pudieron cargar los ítems de este menú. Intenta de nuevo.' );
+				} ).always( function () {
+					$spinner.removeClass( 'is-active' );
+					$menuSelect.prop( 'disabled', false );
+				} );
+			} );
+		}
 	} );
 })( jQuery );

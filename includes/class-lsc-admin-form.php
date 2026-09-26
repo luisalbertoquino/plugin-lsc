@@ -20,6 +20,7 @@ class LSC_Admin_Form {
 		$this->repository = $repository;
 
 		add_action( 'admin_post_lsc_bloque_save', array( $this, 'handle_save' ) );
+		add_action( 'wp_ajax_lsc_get_menu_items', array( $this, 'handle_get_menu_items' ) );
 	}
 
 	public function render() {
@@ -38,9 +39,8 @@ class LSC_Admin_Form {
 		$scope            = $block ? $block['scope'] : 'all';
 		$scope_pages      = $block ? $block['scope_pages'] : array();
 
-		$menus       = wp_get_nav_menus();
-		$menu_items  = $menu_id ? LSC_Menu_Items::get_top_level_items( $menu_id ) : array();
-		$pages       = get_pages();
+		$menus = wp_get_nav_menus();
+		$pages = get_pages();
 
 		$back_url = admin_url( 'admin.php?page=lsc-accesibilidad' );
 		?>
@@ -74,7 +74,7 @@ class LSC_Admin_Form {
 					<tr>
 						<th><label for="lsc-menu">Menú de WordPress de origen</label></th>
 						<td>
-							<select id="lsc-menu" name="menu_id" required onchange="this.form.querySelector('[name=lsc_reload]').value='1'; this.form.submit();">
+							<select id="lsc-menu" name="menu_id" required>
 								<option value="">-- Selecciona un menú --</option>
 								<?php foreach ( $menus as $menu ) : ?>
 									<option value="<?php echo esc_attr( $menu->term_id ); ?>" <?php selected( $menu_id, $menu->term_id ); ?>>
@@ -82,8 +82,8 @@ class LSC_Admin_Form {
 									</option>
 								<?php endforeach; ?>
 							</select>
-							<input type="hidden" name="lsc_reload" value="0">
-							<p class="description">Al cambiar el menú se recarga la página para mostrar sus ítems principales.</p>
+							<span class="spinner lsc-menu-spinner" style="float:none;"></span>
+							<p class="description">Al cambiar el menú se cargan sus ítems principales más abajo, sin perder lo demás que ya hayas llenado.</p>
 						</td>
 					</tr>
 					<tr>
@@ -147,27 +147,9 @@ class LSC_Admin_Form {
 					</tr>
 				</table>
 
-				<?php if ( $menu_id ) : ?>
-					<h2>Ítems principales de "<?php echo esc_html( $this->menu_name( $menu_id ) ); ?>"</h2>
-					<?php if ( empty( $menu_items ) ) : ?>
-						<p>Este menú no tiene ítems de nivel principal.</p>
-					<?php else : ?>
-						<table class="widefat lsc-accesibilidad-table">
-							<thead>
-								<tr>
-									<th>Ítem del menú</th>
-									<th>Contenido LSC</th>
-									<th>Acciones</th>
-								</tr>
-							</thead>
-							<tbody>
-								<?php foreach ( $menu_items as $menu_item ) : ?>
-									<?php $this->render_item_row( $menu_item, $items ); ?>
-								<?php endforeach; ?>
-							</tbody>
-						</table>
-					<?php endif; ?>
-				<?php endif; ?>
+				<div id="lsc-items-section">
+					<?php $this->render_items_section( $menu_id, $items ); ?>
+				</div>
 
 				<?php submit_button( $block ? 'Guardar cambios' : 'Crear bloque' ); ?>
 			</form>
@@ -178,6 +160,73 @@ class LSC_Admin_Form {
 	private function menu_name( $menu_id ) {
 		$menu = get_term( $menu_id, 'nav_menu' );
 		return ( $menu && ! is_wp_error( $menu ) ) ? $menu->name : '';
+	}
+
+	/**
+	 * Renderiza la tabla de ítems principales del menú elegido, con el
+	 * contenido LSC ya asignado a cada uno. La usan tanto la carga
+	 * inicial de la página (render()) como la recarga por AJAX al
+	 * cambiar de menú (handle_get_menu_items()), para no duplicar HTML.
+	 *
+	 * @param int   $menu_id
+	 * @param array $items Ítems ya guardados, indexados por ID de ítem.
+	 */
+	private function render_items_section( $menu_id, $items ) {
+		if ( ! $menu_id ) {
+			return;
+		}
+
+		$menu_items = LSC_Menu_Items::get_top_level_items( $menu_id );
+		?>
+		<h2>Ítems principales de "<?php echo esc_html( $this->menu_name( $menu_id ) ); ?>"</h2>
+		<?php if ( empty( $menu_items ) ) : ?>
+			<p>Este menú no tiene ítems de nivel principal.</p>
+		<?php else : ?>
+			<table class="widefat lsc-accesibilidad-table">
+				<thead>
+					<tr>
+						<th>Ítem del menú</th>
+						<th>Contenido LSC</th>
+						<th>Acciones</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php foreach ( $menu_items as $menu_item ) : ?>
+						<?php $this->render_item_row( $menu_item, $items ); ?>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
+		<?php endif; ?>
+		<?php
+	}
+
+	/**
+	 * Endpoint AJAX que devuelve la tabla de ítems del menú elegido, sin
+	 * recargar el resto del formulario (nombre, tamaño, posición, etc.
+	 * ya llenados). Si el bloque ya existe, conserva el contenido LSC
+	 * previamente asignado a los ítems que coincidan.
+	 */
+	public function handle_get_menu_items() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( 'No tienes permisos para realizar esta acción.', 403 );
+		}
+
+		check_ajax_referer( self::NONCE_ACTION, 'nonce' );
+
+		$menu_id = isset( $_POST['menu_id'] ) ? absint( $_POST['menu_id'] ) : 0;
+		$id      = isset( $_POST['id'] ) ? absint( $_POST['id'] ) : 0;
+		$block   = $id ? $this->repository->find( $id ) : null;
+
+		// Solo se conserva el contenido ya asignado si es el mismo menú
+		// con el que se guardó el bloque; si se cambió de menú, los IDs
+		// de ítem no corresponden a nada y se empieza en blanco.
+		$items = ( $block && $block['menu_id'] === $menu_id ) ? $block['items'] : array();
+
+		ob_start();
+		$this->render_items_section( $menu_id, $items );
+		$html = ob_get_clean();
+
+		wp_send_json_success( array( 'html' => $html ) );
 	}
 
 	private function render_item_row( $menu_item, $saved_items ) {
@@ -234,20 +283,6 @@ class LSC_Admin_Form {
 
 		$id      = isset( $_POST['id'] ) ? absint( $_POST['id'] ) : 0;
 		$menu_id = isset( $_POST['menu_id'] ) ? absint( $_POST['menu_id'] ) : 0;
-
-		// Si solo se cambió el menú (para recargar sus ítems), no guardamos todavía.
-		if ( ! empty( $_POST['lsc_reload'] ) ) {
-			$redirect = add_query_arg(
-				array_filter( array(
-					'page'    => 'lsc-accesibilidad-form',
-					'id'      => $id ?: null,
-					'menu_id' => $menu_id,
-				) ),
-				admin_url( 'admin.php' )
-			);
-			wp_safe_redirect( $redirect );
-			exit;
-		}
 
 		$name = isset( $_POST['name'] ) ? sanitize_text_field( wp_unslash( $_POST['name'] ) ) : '';
 
